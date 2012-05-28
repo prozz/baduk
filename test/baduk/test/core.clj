@@ -37,9 +37,21 @@
         (are [pos] (true? (no-stone? board pos) 0 1 2 3 4 5 6 7 8)))
       (testing "single white stone at random position"
         (let [pos (rand-int 9)
-              board (put-stone board pos white)]
+              board (put-stone board white pos)]
           (is (white? board pos))))
       (testing "single black stone at random position"
         (let [pos (rand-int 9)
-              board (put-stone board pos black)]
+              board (put-stone board black pos)]
           (is (black? board pos)))))))
+
+(deftest liberties-counting
+  (testing "3x3 board with single colour stones only"
+    (let [board (board 3)]
+      (testing "no stones"
+        (are [pos] (thrown? IllegalArgumentException (count-liberties board pos)) 0 1 2 3 4 5 6 7 8))
+      (testing "1 stone in corner"
+        (let [board (put-stones board white 0 2 6 8)]
+          (are [pos] (= 2 (count-liberties board pos)) 0 2 6 8)))
+      (testing "1 stone at edge"
+        (let [board (put-stones board black 1 3 5 7)]
+          (are [pos] (= 3 (count-liberties board pos)) 1 3 5 7))))))

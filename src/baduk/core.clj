@@ -33,8 +33,12 @@
      :else false)))
 
 (defn put-stone
-  [board pos stone]
+  [board stone pos]
   (assoc board pos stone))
+
+(defn put-stones
+  [board stone & positions]
+  (reduce (fn [board pos] (put-stone board stone pos)) board (seq positions)))
 
 (defn white?
   [board pos]
@@ -53,3 +57,11 @@
   (let [size (board-size board)
         rows (partition size board)]
     (doseq [row rows] (println row))))
+
+(defn count-liberties
+  [board pos]
+  (cond
+   (no-stone? board pos) (throw (IllegalArgumentException. "no group at pos to count liberties"))
+   (corner? board pos) 2
+   (edge? board pos) 3
+   :else 4))
