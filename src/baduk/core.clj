@@ -1,14 +1,18 @@
 (ns baduk.core)
 
+(def black \b)
+(def white \w)
+(def no-stone \.)
+
 (defn board
   [size]
-  (vec (repeat (* size size) \.)))
+  (vec (repeat (* size size) no-stone)))
 
 (defn board-size
   [board]
   (int (Math/sqrt (count board))))
 
-(defn is-edge?
+(defn edge?
   [board pos]
   (let [size (board-size board)]
     (cond
@@ -18,7 +22,7 @@
      (= 0 (mod pos size)) true
      :else false)))
 
-(defn is-corner?
+(defn corner?
   [board pos]
   (let [size (board-size board)]
     (cond
@@ -28,9 +32,24 @@
      (= pos (- (* size size) size)) true
      :else false)))
 
-(defn count-liberties
+(defn put-stone
+  [board pos stone]
+  (assoc board pos stone))
+
+(defn white?
   [board pos]
-  (cond
-   (is-corner? board pos) 2
-   (is-edge? board pos) 3
-   :else 4))
+  (= white (board pos)))
+
+(defn black?
+  [board pos]
+  (= black (board pos)))
+
+(defn no-stone?
+  [board pos]
+  (= no-stone (board pos)))
+
+(defn print-board
+  [board]
+  (let [size (board-size board)
+        rows (partition size board)]
+    (doseq [row rows] (println row))))
