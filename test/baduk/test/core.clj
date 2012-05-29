@@ -2,6 +2,12 @@
   (:use [baduk.core])
   (:use [clojure.test]))
 
+(defmacro on-board
+  "pretty print of board under test for easy debugging"
+  [board & body]
+  `(let [s# (board-size ~board)]
+     (testing (str "on " s# "x" s# " board like:\n" (print-board-str ~board)) ~@body)))
+
 (deftest board-properties
   (let [board (board 3)]
     (is (vector? board))
@@ -11,29 +17,29 @@
     (is (= \. (first (distinct board))))))
 
 (deftest edges-checking
-  (testing "3x3 board"
-    (let [board (board 3)]
+  (let [board (board 3)]
+    (on-board board
       (are [pos] (true? (edge? board pos)) 0 1 2 3 5 6 7 8)
       (are [pos] (false? (edge? board pos)) 4)))
-  (testing "4x4 board"
-    (let [board (board 4)]
+  (let [board (board 4)]
+    (on-board board
       (are [pos] (true? (edge? board pos)) 0 1 2 3 4 7 8 11 12 13 14 15)
       (are [pos] (false? (edge? board pos)) 5 6 9 10))))
 
 (deftest corner-checking
-  (testing "3x3 board"
-    (let [board (board 3)]
+  (let [board (board 3)]
+    (on-board board
       (are [pos] (true? (corner? board pos)) 0 2 6 8)
       (are [pos] (false? (corner? board pos)) 1 3 4 5 7)))
-  (testing "4x4 board"
-    (let [board (board 4)]
+  (let [board (board 4)]
+    (on-board board
       (are [pos] (true? (corner? board pos)) 0 3 12 15)
       (are [pos] (false? (corner? board pos)) 1 2 4 5 6 7 8 9 10 11 13 14))))
 
 (deftest board-examining
-  (testing "3x3 board"
-    (let [board (board 3)]
-      (testing "all is empty"
+  (let [board (board 3)]
+    (on-board board
+      (testing "no stones"
         (are [pos] (true? (no-stone? board pos) 0 1 2 3 4 5 6 7 8)))
       (testing "single white stone at random position"
         (let [pos (rand-int 9)
@@ -45,8 +51,8 @@
           (is (black? board pos)))))))
 
 (deftest liberties-counting
-  (testing "3x3 board with single colour stones only"
-    (let [board (board 3)]
+  (let [board (board 3)]
+    (on-board board
       (testing "no stones"
         (are [pos] (thrown? IllegalArgumentException (count-liberties board pos)) 0 1 2 3 4 5 6 7 8))
       (testing "1 stone in corner"

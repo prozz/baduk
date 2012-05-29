@@ -1,4 +1,5 @@
-(ns baduk.core)
+(ns baduk.core
+  (:use [clojure.string :only (join) :as s]))
 
 (def black \b)
 (def white \w)
@@ -39,8 +40,8 @@
 (defn put-stones
   [board stone & positions]
   ; syntatic sugar for:
-  ; (reduce (fn [board pos] (put-stone board stone pos)) board (seq positions)))
-  (reduce #(put-stone %1 stone %2) board (seq positions)))
+  ; (reduce (fn [board pos] (put-stone board stone pos)) board positions))
+  (reduce #(put-stone %1 stone %2) board positions))
 
 (defn white?
   [board pos]
@@ -54,11 +55,15 @@
   [board pos]
   (= no-stone (board pos)))
 
-(defn print-board
+(defn print-board-str
   [board]
   (let [size (board-size board)
         rows (partition size board)]
-    (doseq [row rows] (println row))))
+    (s/join (map println-str rows))))
+
+(defn print-board
+  [board]
+  (println (print-board-str board)))
 
 (defn count-liberties
   [board pos]
