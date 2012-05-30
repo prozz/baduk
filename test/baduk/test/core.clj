@@ -40,7 +40,7 @@
   (let [board (board 3)]
     (testing-on board
       (testing "no stones"
-        (are [pos] (true? (no-stone? board pos) 0 1 2 3 4 5 6 7 8)))
+        (are [pos] (true? (no-stone? board pos)) 0 1 2 3 4 5 6 7 8))
       (testing "single white stone at random position"
         (let [pos (rand-int 9)
               board (put-stone board white pos)]
