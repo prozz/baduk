@@ -50,14 +50,17 @@
               board (put-stone board black pos)]
           (is (black? board pos)))))))
 
-(deftest liberties-counting
+(deftest positions-checking
   (let [board (board 3)]
-    (testing-on board
-      (testing "no stones"
-        (are [pos] (thrown? IllegalArgumentException (count-liberties board pos)) 0 1 2 3 4 5 6 7 8))
-      (testing "1 stone in corner"
-        (let [board (put-stones board white 0 2 6 8)]
-          (are [pos] (= 2 (count-liberties board pos)) 0 2 6 8)))
-      (testing "1 stone at edge"
-        (let [board (put-stones board black 1 3 5 7)]
-          (are [pos] (= 3 (count-liberties board pos)) 1 3 5 7))))))
+    (testing "corner"
+      (is (= '(1 3)  (adjacent-positions board 0)))
+      (is (= '(1 5) (adjacent-positions board 2)))
+      (is (= '(3 7) (adjacent-positions board 6)))
+      (is (= '(5 7) (adjacent-positions board 8))))
+    (testing "edge"
+      (is (= '(0 2 4) (adjacent-positions board 1)))
+      (is (= '(0 4 6) (adjacent-positions board 3)))
+      (is (= '(2 4 8) (adjacent-positions board 5)))
+      (is (= '(4 6 8) (adjacent-positions board 7))))
+    (testing "middle"
+      (is (= '(1 3 5 7) (adjacent-positions board 4))))))

@@ -65,6 +65,22 @@
   [board]
   (print (print-board-str board)))
 
+(defn adjacent-positions
+  [board pos]
+  (let [size (board-size board)
+        up (- pos size)
+        down (+ pos size)
+        ;; doubles will not pass thru valid-pos? test and for sure
+        ;; no exception will be raised (like with putting same values
+        ;; to set)
+        left (if (= 0 (mod pos size)) -0.1 (- pos 1))
+        right (if (= 0 (mod (+ pos 1) size)) -0.2 (+ pos 1))
+        valid-pos? #(and (>= %1 0) (< %1 (* size size)))]
+    ;; somehow filtering set returns sorted seq, so its easy in test
+    ;; to do assertions. unsure if its safe to leave it as is or if
+    ;; its some undefined side effect only.
+    (filter valid-pos? #{ up down left right })))
+
 (defn count-liberties
   [board pos]
   (cond
