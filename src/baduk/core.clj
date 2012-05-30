@@ -63,7 +63,7 @@
 
 (defn print-board
   [board]
-  (println (print-board-str board)))
+  (print (print-board-str board)))
 
 (defn count-liberties
   [board pos]
