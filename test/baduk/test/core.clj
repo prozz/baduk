@@ -2,7 +2,7 @@
   (:use [baduk.core])
   (:use [clojure.test]))
 
-(defmacro on-board
+(defmacro testing-on
   "pretty print of board under test for easy debugging"
   [board & body]
   `(let [s# (board-size ~board)]
@@ -18,27 +18,27 @@
 
 (deftest edges-checking
   (let [board (board 3)]
-    (on-board board
+    (testing-on board
       (are [pos] (true? (edge? board pos)) 0 1 2 3 5 6 7 8)
       (are [pos] (false? (edge? board pos)) 4)))
   (let [board (board 4)]
-    (on-board board
+    (testing-on board
       (are [pos] (true? (edge? board pos)) 0 1 2 3 4 7 8 11 12 13 14 15)
       (are [pos] (false? (edge? board pos)) 5 6 9 10))))
 
 (deftest corner-checking
   (let [board (board 3)]
-    (on-board board
+    (testing-on board
       (are [pos] (true? (corner? board pos)) 0 2 6 8)
       (are [pos] (false? (corner? board pos)) 1 3 4 5 7)))
   (let [board (board 4)]
-    (on-board board
+    (testing-on board
       (are [pos] (true? (corner? board pos)) 0 3 12 15)
       (are [pos] (false? (corner? board pos)) 1 2 4 5 6 7 8 9 10 11 13 14))))
 
 (deftest board-examining
   (let [board (board 3)]
-    (on-board board
+    (testing-on board
       (testing "no stones"
         (are [pos] (true? (no-stone? board pos) 0 1 2 3 4 5 6 7 8)))
       (testing "single white stone at random position"
@@ -52,7 +52,7 @@
 
 (deftest liberties-counting
   (let [board (board 3)]
-    (on-board board
+    (testing-on board
       (testing "no stones"
         (are [pos] (thrown? IllegalArgumentException (count-liberties board pos)) 0 1 2 3 4 5 6 7 8))
       (testing "1 stone in corner"
