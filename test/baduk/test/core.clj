@@ -148,4 +148,8 @@
       (testing "fill with white on all positions but one, try last black stone"
         (is (legal-move? (put-stones board white 2 4 6 8) black 0)))
       (testing "play black inside or in corners"
-        (are [pos] (not (legal-move? board black pos)) 0 2 4 6 8)))))
+        (are [pos] (not (legal-move? board black pos)) 0 2 4 6 8))))
+  (let [board (put-stones (board 3) black 0 1 2 3 5 6 7 8)]
+    (testing-on board
+      (testing "one white stone to rule them all"
+        (is (legal-move? board white 4))))))
