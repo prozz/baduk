@@ -53,17 +53,17 @@
 (deftest adjacent-positions-checking
   (let [board (board 3)]
     (testing "corner"
-      (is (= '(1 3) (adjacent-positions board 0)))
-      (is (= '(1 5) (adjacent-positions board 2)))
-      (is (= '(3 7) (adjacent-positions board 6)))
-      (is (= '(5 7) (adjacent-positions board 8))))
+      (is (= '(1 3) (sort (adjacent-positions board 0))))
+      (is (= '(1 5) (sort (adjacent-positions board 2))))
+      (is (= '(3 7) (sort (adjacent-positions board 6))))
+      (is (= '(5 7) (sort (adjacent-positions board 8)))))
     (testing "edge"
-      (is (= '(0 2 4) (adjacent-positions board 1)))
-      (is (= '(0 4 6) (adjacent-positions board 3)))
-      (is (= '(2 4 8) (adjacent-positions board 5)))
-      (is (= '(4 6 8) (adjacent-positions board 7))))
+      (is (= '(0 2 4) (sort (adjacent-positions board 1))))
+      (is (= '(0 4 6) (sort (adjacent-positions board 3))))
+      (is (= '(2 4 8) (sort (adjacent-positions board 5))))
+      (is (= '(4 6 8) (sort (adjacent-positions board 7)))))
     (testing "middle"
-      (is (= '(1 3 5 7) (adjacent-positions board 4))))))
+      (is (= '(1 3 5 7) (sort (adjacent-positions board 4)))))))
 
 (deftest group-positions-checking
   (testing "no stone"

@@ -80,7 +80,7 @@
         left (if (= 0 (mod pos size)) :invalid (- pos 1))
         right (if (= 0 (mod (+ pos 1) size)) :invalid (+ pos 1))
         valid-pos? #(and (integer? %1) (>= %1 0) (< %1 (* size size)))]
-    (filter valid-pos? #{ up down left right })))
+    (filter valid-pos? (list up down left right))))
 
 (defn group-positions
   [board pos]
