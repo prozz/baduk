@@ -76,8 +76,7 @@
   (testing "two black stones"
     (let [board (put-stones (board 3) black 4 1)]
       (testing-on board
-                  (is (= '(1 4) (sort (group-positions board 4))))
-                  (is (= '(1 4) (sort (group-positions board 1)))))))
+                  (are [pos] (= '(1 4) (sort (group-positions board pos))) 1 4))))
   (testing "single white stone"
     (let [board (put-stone (board 3) white 4)]
       (testing-on board
@@ -85,23 +84,16 @@
   (testing "two white stones"
     (let [board (put-stones (board 3) white 4 1)]
       (testing-on board
-                  (is (= '(1 4) (sort (group-positions board 4))))
-                  (is (= '(1 4) (sort (group-positions board 1)))))))
+                  (are [pos] (= '(1 4) (sort (group-positions board pos))) 4 1))))
   (testing "group of three stones"
     (let [board (put-stones (board 3) white 3 4 5)]
       (testing-on board
-                  (is (= '(3 4 5) (sort (group-positions board 3))))
-                  (is (= '(3 4 5) (sort (group-positions board 4))))
-                  (is (= '(3 4 5) (sort (group-positions board 5)))))))
+                  (are [pos] (= '(3 4 5) (sort (group-positions board pos))) 3 4 5))))
   (testing "empty triangle group near edges"
     (let [board (put-stones (board 3) white 0 1 3)]
       (testing-on board
-                  (is (= '(0 1 3) (sort (group-positions board 0))))
-                  (is (= '(0 1 3) (sort (group-positions board 1))))
-                  (is (= '(0 1 3) (sort (group-positions board 3)))))))
+                  (are [pos] (= '(0 1 3) (sort (group-positions board pos))) 0 1 3))))
   (testing "empty triangle group in the middle"
     (let [board (put-stones (board 4) black 5 6 9)]
       (testing-on board
-                  (is (= '(5 6 9) (sort (group-positions board 5))))
-                  (is (= '(5 6 9) (sort (group-positions board 6))))
-                  (is (= '(5 6 9) (sort (group-positions board 9))))))))
+                  (are [pos] (= '(5 6 9) (sort (group-positions board pos))) 5 6 9)))))
