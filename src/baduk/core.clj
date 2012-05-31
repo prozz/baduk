@@ -92,10 +92,10 @@
              checked (list pos)]
         (let [group-stones (filter #(color? board %1) adjacent)]
           (if (empty? group-stones)
-            (distinct checked)
+            checked
             (recur
               (remove (into #{} checked) (flatten (map #(adjacent-positions board %1) group-stones)))
-              (into group-stones checked))))))))
+              (distinct (into group-stones checked)))))))))
 
 (defn count-liberties
   [board pos]
