@@ -86,4 +86,22 @@
     (let [board (put-stones (board 3) white 4 1)]
       (testing-on board
                   (is (= '(1 4) (sort (group-positions board 4))))
-                  (is (= '(1 4) (sort (group-positions board 1))))))))
+                  (is (= '(1 4) (sort (group-positions board 1)))))))
+  (testing "group of three stones"
+    (let [board (put-stones (board 3) white 3 4 5)]
+      (testing-on board
+                  (is (= '(3 4 5) (sort (group-positions board 3))))
+                  (is (= '(3 4 5) (sort (group-positions board 4))))
+                  (is (= '(3 4 5) (sort (group-positions board 5)))))))
+  (testing "empty triangle group near edges"
+    (let [board (put-stones (board 3) white 0 1 3)]
+      (testing-on board
+                  (is (= '(0 1 3) (sort (group-positions board 0))))
+                  (is (= '(0 1 3) (sort (group-positions board 1))))
+                  (is (= '(0 1 3) (sort (group-positions board 3)))))))
+  (testing "empty triangle group in the middle"
+    (let [board (put-stones (board 4) black 5 6 9)]
+      (testing-on board
+                  (is (= '(5 6 9) (sort (group-positions board 5))))
+                  (is (= '(5 6 9) (sort (group-positions board 6))))
+                  (is (= '(5 6 9) (sort (group-positions board 9))))))))
