@@ -39,8 +39,6 @@
 
 (defn put-stones
   [board stone & positions]
-  ; syntatic sugar for:
-  ; (reduce (fn [board pos] (put-stone board stone pos)) board positions))
   (reduce #(put-stone %1 stone %2) board positions))
 
 (defn white?
