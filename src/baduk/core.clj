@@ -92,7 +92,7 @@
              checked (list pos)]
         (let [group-stones (filter #(color? board %1) adjacent)]
           (if (empty? group-stones)
-            checked
+            (distinct checked)
             (recur
               (remove (into #{} checked) (flatten (map #(adjacent-positions board %1) group-stones)))
               (into group-stones checked))))))))
@@ -102,3 +102,25 @@
   (count
     (filter #(no-stone? board %1)
       (distinct (flatten (map #(adjacent-positions board %1) (group-positions board pos)))))))
+
+(defn legal-move?
+  [board stone pos]
+  (if (not (no-stone? board pos))
+    (throw (IllegalArgumentException. "illegal move, stone is there..."))
+    (let [board (put-stone board stone pos)
+          group (group-positions board pos)
+          liberties (count-liberties board pos)
+          pos-around (flatten (map #(adjacent-positions board %1) group))
+          color? (get {black white? white black?} stone)
+          opp-stones (filter #(color? board %1) pos-around)
+          opp-liberties (map #(count-liberties board %1) opp-stones)
+          opp-alive (count (filter #(> %1 0) opp-liberties))]
+      (cond
+        (> liberties 0) true
+        (and
+          (= 0 liberties)
+          (empty? opp-stones)) false
+        (and
+          (= 0 liberties)
+          (= 0 opp-alive)) true
+        :else false))))

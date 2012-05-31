@@ -19,28 +19,28 @@
 (deftest edges-checking
   (let [board (board 3)]
     (testing-on board
-      (are [pos] (true? (edge? board pos)) 0 1 2 3 5 6 7 8)
-      (are [pos] (false? (edge? board pos)) 4)))
+      (are [pos] (edge? board pos) 0 1 2 3 5 6 7 8)
+      (are [pos] (not (edge? board pos)) 4)))
   (let [board (board 4)]
     (testing-on board
-      (are [pos] (true? (edge? board pos)) 0 1 2 3 4 7 8 11 12 13 14 15)
-      (are [pos] (false? (edge? board pos)) 5 6 9 10))))
+      (are [pos] (edge? board pos) 0 1 2 3 4 7 8 11 12 13 14 15)
+      (are [pos] (not (edge? board pos)) 5 6 9 10))))
 
 (deftest corner-checking
   (let [board (board 3)]
     (testing-on board
-      (are [pos] (true? (corner? board pos)) 0 2 6 8)
-      (are [pos] (false? (corner? board pos)) 1 3 4 5 7)))
+      (are [pos] (corner? board pos) 0 2 6 8)
+      (are [pos] (not (corner? board pos)) 1 3 4 5 7)))
   (let [board (board 4)]
     (testing-on board
-      (are [pos] (true? (corner? board pos)) 0 3 12 15)
-      (are [pos] (false? (corner? board pos)) 1 2 4 5 6 7 8 9 10 11 13 14))))
+      (are [pos] (corner? board pos) 0 3 12 15)
+      (are [pos] (not (corner? board pos)) 1 2 4 5 6 7 8 9 10 11 13 14))))
 
 (deftest board-examining
   (let [board (board 3)]
     (testing-on board
       (testing "no stones"
-        (are [pos] (true? (no-stone? board pos)) 0 1 2 3 4 5 6 7 8))
+        (are [pos] (no-stone? board pos) 0 1 2 3 4 5 6 7 8))
       (testing "single white stone at random position"
         (let [pos (rand-int 9)
               board (put-stone board white pos)]
@@ -96,7 +96,11 @@
   (testing "empty triangle group in the middle"
     (let [board (put-stones (board 4) black 5 6 9)]
       (testing-on board
-        (are [pos] (= '(5 6 9) (sort (group-positions board pos))) 5 6 9)))))
+        (are [pos] (= '(5 6 9) (sort (group-positions board pos))) 5 6 9))))
+  (testing "cake like group"
+    (let [board (put-stones (board 4) black 5 6 9 10)]
+      (testing-on board
+        (are [pos] (= '(5 6 9 10) (sort (group-positions board pos))) 5 6 9 10)))))
 
 (deftest liberties-counting
   (testing "no stone"
@@ -118,3 +122,30 @@
     (let [board (put-stones (put-stones (board 4) black 13 14) white 5 6 9 10)]
       (testing-on board
         (are [pos] (= 6 (count-liberties board pos)) 5 6 9 10)))))
+
+(deftest legality-of-movement
+  (let [board (board 3)]
+    (testing "empty board"
+      (are [pos] (legal-move? board white pos) 0 1 2 3 4 5 6 7 8)))
+  (let [board (put-stone (board 3) white 4)]
+    (testing-on board
+      (testing "adjacent move same stone"
+        (are [pos] (legal-move? board white pos) 1 3 5 7))
+      (testing "adjacent move different stone"
+        (are [pos] (legal-move? board black pos) 1 3 5 7))
+      (testing "diagonal move same stone"
+        (are [pos] (legal-move? board white pos) 0 2 6 8))
+      (testing "diagonal move different stone"
+        (are [pos] (legal-move? board black pos) 0 2 6 8))))
+  (let [board (put-stones (board 3) white 1 3 5 7)]
+    (testing-on board
+      (testing "fill with white on single position"
+        (are [pos] (legal-move? board white pos) 0 2 4 6 8))
+      (testing "fill with white on all positions but one"
+        (is (legal-move? (put-stones board white 2 4 6) white 8)))
+      (testing "fill with white on all positions but one, try last white stone"
+        (is (not (legal-move? (put-stones board white 2 4 6 8) white 0))))
+      (testing "fill with white on all positions but one, try last black stone"
+        (is (legal-move? (put-stones board white 2 4 6 8) black 0)))
+      (testing "play black inside or in corners"
+        (are [pos] (not (legal-move? board black pos)) 0 2 4 6 8)))))
