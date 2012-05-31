@@ -55,6 +55,13 @@
   [board pos]
   (= no-stone (board pos)))
 
+(defn what-stone?
+  [board pos]
+  (cond
+   (white? board pos) white
+   (black? board pos) black
+   :else no-stone))
+
 (defn print-board-str
   [board]
   (let [size (board-size board)
@@ -75,10 +82,18 @@
         valid-pos? #(and (integer? %1) (>= %1 0) (< %1 (* size size)))]
     (filter valid-pos? #{ up down left right })))
 
-(defn count-liberties
+(defn group-positions
   [board pos]
-  (cond
-   (no-stone? board pos) (throw (IllegalArgumentException. "nothing to count here..."))
-   (corner? board pos) 2
-   (edge? board pos) 3
-   :else 4))
+    (cond
+     (no-stone? board pos) (throw (IllegalArgumentException. "no stone..."))
+     :else
+     (let [stone (what-stone? board pos)
+           color? (get {black black? white white?} stone)]
+       (loop [adjacent (adjacent-positions board pos)
+              checked (list pos)]
+         (let [group-stones (filter #(color? board %1) adjacent)]
+           (if (empty? group-stones)
+             checked
+             (recur
+              (remove (into #{} checked) (flatten (map #(adjacent-positions board %1) group-stones)))
+              (into group-stones checked))))))))

@@ -50,7 +50,7 @@
               board (put-stone board black pos)]
           (is (black? board pos)))))))
 
-(deftest positions-checking
+(deftest adjacent-positions-checking
   (let [board (board 3)]
     (testing "corner"
       (is (= '(1 3)  (adjacent-positions board 0)))
@@ -64,3 +64,26 @@
       (is (= '(4 6 8) (adjacent-positions board 7))))
     (testing "middle"
       (is (= '(1 3 5 7) (adjacent-positions board 4))))))
+
+(deftest group-positions-checking
+  (testing "no stone"
+    (let [board (board 3)]
+      (is (thrown? IllegalArgumentException (group-positions board 4)))))
+  (testing "single black stone"
+    (let [board (put-stone (board 3) black 4)]
+      (testing-on board
+                  (is (= '(4) (group-positions board 4))))))
+  (testing "two black stones"
+    (let [board (put-stones (board 3) black 4 1)]
+      (testing-on board
+                  (is (= '(1 4) (sort (group-positions board 4))))
+                  (is (= '(1 4) (sort (group-positions board 1)))))))
+  (testing "single white stone"
+    (let [board (put-stone (board 3) white 4)]
+      (testing-on board
+                  (is (= '(4) (group-positions board 4))))))
+  (testing "two white stones"
+    (let [board (put-stones (board 3) white 4 1)]
+      (testing-on board
+                  (is (= '(1 4) (sort (group-positions board 4))))
+                  (is (= '(1 4) (sort (group-positions board 1))))))))
