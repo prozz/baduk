@@ -96,3 +96,9 @@
             (recur
               (remove (into #{} checked) (flatten (map #(adjacent-positions board %1) group-stones)))
               (into group-stones checked))))))))
+
+(defn count-liberties
+  [board pos]
+  (count
+    (filter #(no-stone? board %1)
+      (distinct (flatten (map #(adjacent-positions board %1) (group-positions board pos)))))))

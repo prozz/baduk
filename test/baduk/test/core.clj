@@ -97,3 +97,24 @@
     (let [board (put-stones (board 4) black 5 6 9)]
       (testing-on board
         (are [pos] (= '(5 6 9) (sort (group-positions board pos))) 5 6 9)))))
+
+(deftest liberties-counting
+  (testing "no stone"
+    (let [board (board 3)]
+      (are [pos] (thrown? IllegalArgumentException (count-liberties board pos)) 0 1 2 3 4 5 6 7 8)))
+  (testing "single stone"
+    (let [board (board 3)]
+      (testing "in corner"
+        (are [pos] (= 2 (count-liberties (put-stone board white pos) pos)) 0 2 6 8))
+      (testing "at edge"
+        (are [pos] (= 3 (count-liberties (put-stone board black pos) pos)) 1 3 5 7))
+      (testing "in the middle"
+        (is (= 4 (count-liberties (put-stone board black 4) 4))))))
+  (testing "group with common liberties"
+    (let [board (put-stones (board 3) white 1 3 4 5 7)]
+      (testing-on board
+        (are [pos] (= 4 (count-liberties board pos)) 1 3 4 5 7))))
+  (testing "white group with black stones attached"
+    (let [board (put-stones (put-stones (board 4) black 13 14) white 5 6 9 10)]
+      (testing-on board
+        (are [pos] (= 6 (count-liberties board pos)) 5 6 9 10)))))
