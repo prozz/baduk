@@ -84,16 +84,15 @@
 
 (defn group-positions
   [board pos]
-    (cond
-     (no-stone? board pos) (throw (IllegalArgumentException. "no stone..."))
-     :else
-     (let [stone (what-stone? board pos)
-           color? (get {black black? white white?} stone)]
-       (loop [adjacent (adjacent-positions board pos)
-              checked (list pos)]
-         (let [group-stones (filter #(color? board %1) adjacent)]
-           (if (empty? group-stones)
-             checked
-             (recur
+  (if (no-stone? board pos)
+    (throw (IllegalArgumentException. "no stone..."))
+    (let [stone (what-stone? board pos)
+          color? (get {black black? white white?} stone)]
+      (loop [adjacent (adjacent-positions board pos)
+             checked (list pos)]
+        (let [group-stones (filter #(color? board %1) adjacent)]
+          (if (empty? group-stones)
+            checked
+            (recur
               (remove (into #{} checked) (flatten (map #(adjacent-positions board %1) group-stones)))
               (into group-stones checked))))))))
