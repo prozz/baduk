@@ -1,6 +1,7 @@
 (ns baduk.test.core
   (:use [baduk.core])
-  (:use [clojure.test]))
+  (:use [clojure.test])
+  (:use [clojure.tools.trace]))
 
 (defmacro testing-on
   "pretty print of board under test for easy debugging"
