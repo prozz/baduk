@@ -106,11 +106,11 @@
   (if (not (no-stone? board pos))
     (throw (IllegalArgumentException. "illegal move, stone is there..."))
     (let [board (put-stone board stone pos)
-          group (group-positions board pos)
           liberties (count-liberties board pos)]
       (if (> liberties 0)
         true
-        (let [pos-around (flatten (map #(adjacent-positions board %1) group))
+        (let [group (group-positions board pos)
+              pos-around (flatten (map #(adjacent-positions board %1) group))
               color? (get {black white? white black?} stone)
               opp-stones (filter #(color? board %1) pos-around)]
           (if (and
