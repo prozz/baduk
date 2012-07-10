@@ -16,22 +16,20 @@
 (defn edge?
   [board pos]
   (let [size (board-size board)]
-    (cond
-     (< pos size) true
-     (>= pos (- (* size size) size)) true
-     (= 0 (mod (+ pos 1) size)) true
-     (= 0 (mod pos size)) true
-     :else false)))
+    (or
+     (< pos size)
+     (>= pos (- (* size size) size))
+     (= 0 (mod (+ pos 1) size))
+     (= 0 (mod pos size)))))
 
 (defn corner?
   [board pos]
   (let [size (board-size board)]
-    (cond
-     (= pos 0) true
-     (= pos (- size 1)) true
-     (= pos (- (* size size) 1)) true
-     (= pos (- (* size size) size)) true
-     :else false)))
+    (or
+     (= pos 0)
+     (= pos (- size 1))
+     (= pos (- (* size size) 1))
+     (= pos (- (* size size) size)))))
 
 (defn put-stone
   [board stone pos]
@@ -55,10 +53,7 @@
 
 (defn what-stone?
   [board pos]
-  (cond
-   (white? board pos) white
-   (black? board pos) black
-   :else no-stone))
+  (board pos))
 
 (defn print-board-str
   [board]
