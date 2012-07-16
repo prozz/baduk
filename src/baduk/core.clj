@@ -19,16 +19,16 @@
     (or
      (< pos size)
      (>= pos (- (* size size) size))
-     (= 0 (mod (+ pos 1) size))
-     (= 0 (mod pos size)))))
+     (zero? (mod (inc pos) size))
+     (zero? (mod pos size)))))
 
 (defn corner?
   [board pos]
   (let [size (board-size board)]
     (or
-     (= pos 0)
-     (= pos (- size 1))
-     (= pos (- (* size size) 1))
+     (zero? pos)
+     (= pos (dec size))
+     (= pos (dec (* size size)))
      (= pos (- (* size size) size)))))
 
 (defn put-stone
@@ -70,8 +70,8 @@
   (let [size (board-size board)
         up (- pos size)
         down (+ pos size)
-        left (if (= 0 (mod pos size)) :invalid (- pos 1))
-        right (if (= 0 (mod (+ pos 1) size)) :invalid (+ pos 1))
+        left (if (zero? (mod pos size)) :invalid (dec pos))
+        right (if (zero? (mod (inc pos) size)) :invalid (inc pos))
         valid-pos? #(and (integer? %1) (>= %1 0) (< %1 (* size size)))]
     (filter valid-pos? (list up down left right))))
 
@@ -87,7 +87,7 @@
           (if (empty? group-stones)
             checked
             (recur
-              (remove (into #{} checked) (flatten (map #(adjacent-positions board %1) group-stones)))
+              (remove (set checked) (flatten (map #(adjacent-positions board %1) group-stones)))
               (distinct (into group-stones checked)))))))))
 
 (defn count-liberties
@@ -98,22 +98,22 @@
 
 (defn legal-move?
   [board stone pos]
-  (if (not (no-stone? board pos))
+  (if-not (no-stone? board pos)
     (throw (IllegalArgumentException. "illegal move, stone is there..."))
     (let [board (put-stone board stone pos)
           liberties (count-liberties board pos)]
-      (if (> liberties 0)
+      (if (pos? liberties)
         true
         (let [group (group-positions board pos)
               pos-around (flatten (map #(adjacent-positions board %1) group))
               color? (get {black white? white black?} stone)
               opp-stones (filter #(color? board %1) pos-around)]
           (if (and
-                (= 0 liberties)
+                (zero? liberties)
                 (empty? opp-stones))
             false
             (let [opp-liberties (map #(count-liberties board %1) opp-stones)
-                  opp-alive (count (filter #(> %1 0) opp-liberties))]
+                  opp-alive (count (filter pos? opp-liberties))]
               (and
-                (= 0 liberties)
-                (= 0 opp-alive)))))))))
+                (zero? liberties)
+                (zero? opp-alive)))))))))
